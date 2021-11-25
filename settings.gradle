@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Date Time Demo Kt"
 include ':app'
+include ':datetimedialogkt'
