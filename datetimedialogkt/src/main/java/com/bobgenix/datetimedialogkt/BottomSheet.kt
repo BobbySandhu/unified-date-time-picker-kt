@@ -597,7 +597,7 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
             }
         }
 
-        fun processTouchEvent(ev: MotionEvent?, intercept: Boolean): Boolean {
+        private fun processTouchEvent(ev: MotionEvent?, intercept: Boolean): Boolean {
             if (dismissed) {
                 return false
             }
@@ -624,7 +624,13 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 val dx = Math.abs((ev.x - startedTrackingX).toInt()).toFloat()
                 val dy = (ev.y.toInt() - startedTrackingY).toFloat()
                 velocityTracker!!.addMovement(ev)
-                if (startedTracking) {
+
+                if (maybeStartTracking && !startedTracking && dy > 0 && dy / 3.0f > Math.abs(dx) && Math.abs(dy) >= touchSlop) {
+                    startedTrackingY = ev.y.toInt()
+                    maybeStartTracking = false
+                    startedTracking = true
+                    requestDisallowInterceptTouchEvent(true)
+                } else if (startedTracking) {
                     var translationY: Float = containerView?.translationY ?: 0f
                     translationY += dy
                     if (translationY < 0) {
