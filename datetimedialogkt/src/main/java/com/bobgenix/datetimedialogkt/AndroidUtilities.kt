@@ -18,7 +18,7 @@ import android.view.*
 import android.widget.FrameLayout
 import java.lang.reflect.Field
 
-object AndroidUtilities {
+internal object AndroidUtilities {
     var statusBarHeight = 0
     var density = 1f
     var displayMetrics: DisplayMetrics = DisplayMetrics()

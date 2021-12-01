@@ -58,7 +58,7 @@ import java.util.regex.Pattern;
  * @version $Id: FastDateParser.java 1572877 2014-02-28 08:42:25Z britter $
  * @since 3.2
  */
-public class FastDateParser implements DateParser, Serializable {
+class FastDateParser implements DateParser, Serializable {
     /**
      * Required for serialization support.
      *

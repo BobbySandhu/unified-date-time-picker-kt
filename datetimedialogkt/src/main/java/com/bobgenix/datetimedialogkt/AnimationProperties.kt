@@ -3,7 +3,7 @@ package com.bobgenix.datetimedialogkt
 import android.graphics.drawable.ColorDrawable
 import android.util.Property
 
-object AnimationProperties {
+internal object AnimationProperties {
 
     val COLOR_DRAWABLE_ALPHA: Property<ColorDrawable, Int> =
         object : IntProperty<ColorDrawable>("alpha") {

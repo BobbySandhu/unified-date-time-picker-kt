@@ -28,7 +28,7 @@ import java.util.TimeZone;
  *
  * @since 3.2
  */
-public interface DatePrinter {
+interface DatePrinter {
 
     /**
      * <p>Formats a millisecond {@code long} value.</p>

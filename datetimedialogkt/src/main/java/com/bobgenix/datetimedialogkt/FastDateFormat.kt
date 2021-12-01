@@ -60,7 +60,7 @@ import java.util.*
  * @since 2.0
  * @version $Id: FastDateFormat.java 1572877 2014-02-28 08:42:25Z britter $
  */
-open class FastDateFormat protected constructor(
+internal class FastDateFormat protected constructor(
     pattern: String?,
     timeZone: TimeZone?,
     locale: Locale?,

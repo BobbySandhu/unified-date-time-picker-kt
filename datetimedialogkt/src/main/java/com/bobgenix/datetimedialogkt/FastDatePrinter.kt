@@ -64,7 +64,7 @@ import java.util.concurrent.ConcurrentMap
  * @version $Id: FastDatePrinter.java 1567799 2014-02-12 23:25:58Z sebb $
  * @since 3.2
  */
-open class FastDatePrinter(
+internal class FastDatePrinter(
     /**
      * The pattern.
      */

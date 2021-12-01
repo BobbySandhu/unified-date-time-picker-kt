@@ -28,7 +28,7 @@ import java.util.TimeZone;
  *
  * @since 3.2
  */
-public interface DateParser {
+interface DateParser {
 
     /**
      * Equivalent to DateFormat.parse(String).

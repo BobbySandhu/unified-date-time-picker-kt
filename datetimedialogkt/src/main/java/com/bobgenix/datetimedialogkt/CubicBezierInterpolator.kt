@@ -3,7 +3,7 @@ package com.bobgenix.datetimedialogkt
 import android.graphics.PointF
 import android.view.animation.Interpolator
 
-class CubicBezierInterpolator(start: PointF, end: PointF) : Interpolator {
+internal class CubicBezierInterpolator(start: PointF, end: PointF) : Interpolator {
     private var start: PointF
     private var end: PointF
     private var a = PointF()

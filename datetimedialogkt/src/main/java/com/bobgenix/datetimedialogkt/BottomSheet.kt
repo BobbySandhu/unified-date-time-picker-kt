@@ -25,7 +25,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.bobgenix.datetimedialogkt.AndroidUtilities.createFrame
 import kotlin.math.abs
 
-open class BottomSheet(context: Context) : Dialog(context, R.style.TransparentDialog) {
+internal class BottomSheet(context: Context) : Dialog(context, R.style.TransparentDialog) {
 
     private var shadowDrawable: Drawable? = null
     private var backgroundPaddingLeft: Int

@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.SeekBar
 import java.util.HashMap
 
-abstract class SeekBarAccessibilityDelegate : View.AccessibilityDelegate() {
+internal abstract class SeekBarAccessibilityDelegate : View.AccessibilityDelegate() {
 
     private val accessibilityEventRunnables: MutableMap<View, Runnable> = HashMap(4)
 

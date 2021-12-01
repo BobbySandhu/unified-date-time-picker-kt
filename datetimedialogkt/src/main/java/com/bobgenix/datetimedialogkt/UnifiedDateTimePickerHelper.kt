@@ -21,21 +21,24 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.bobgenix.datetimedialogkt.AndroidUtilities.dp
+import com.bobgenix.datetimedialogkt.Constants.DATE_FORMAT_LONG
+import com.bobgenix.datetimedialogkt.Constants.DATE_FORMAT_SHORT
 import java.util.*
 
-object DialogHelper {
+internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: UnifiedDateTimePicker) {
 
     var locale = Locale("en")
-    var formatterScheduleDay = createFormatter(locale, "MMM d", "MMM d")
-    var formatterScheduleYear = createFormatter(locale, "MMM d yyyy", "MMM d yyyy")
+    var formatterScheduleDay = createFormatter(locale, DATE_FORMAT_SHORT, DATE_FORMAT_SHORT)
+    var formatterScheduleYear = createFormatter(locale, DATE_FORMAT_LONG, DATE_FORMAT_LONG)
     var formatterScheduleSend = arrayOfNulls<FastDateFormat>(15)
 
     fun createDatePickerDialog(
-        context: Context,
-        currentDateValue: Long,
-        datePickerDelegate: ScheduleDatePickerDelegate
-    ): BottomSheet.Builder? {
+        context: Context = unifiedDateTimePicker.context,
+        currentDateValue: Long = -1,
+    ): BottomSheet.Builder {
         var currentDate = currentDateValue
+
+        AndroidUtilities.checkDisplaySize(unifiedDateTimePicker.context, unifiedDateTimePicker.context.resources.configuration)
 
         formatterScheduleSend[0] =
             createFormatter(locale, "'Send today at' HH:mm", "'Send today at' HH:mm")
@@ -51,7 +54,7 @@ object DialogHelper {
         builder.setApplyBottomPadding(false)
 
         val dayPicker = NumberPicker(context)
-        dayPicker.setTextColor(Color.WHITE)
+        dayPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         dayPicker.setTextOffset(dp(10f))
         dayPicker.setItemCount(5)
 
@@ -61,7 +64,7 @@ object DialogHelper {
             }
         }
         hourPicker.setItemCount(5)
-        hourPicker.setTextColor(Color.WHITE)
+        hourPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         hourPicker.setTextOffset(-dp(10f))
 
         val minutePicker: NumberPicker = object : NumberPicker(context) {
@@ -70,7 +73,7 @@ object DialogHelper {
             }
         }
         minutePicker.setItemCount(5)
-        minutePicker.setTextColor(Color.WHITE)
+        minutePicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         minutePicker.setTextOffset(-dp(34f))
 
         val container: LinearLayout = object : LinearLayout(context) {
@@ -110,7 +113,7 @@ object DialogHelper {
             createLinear(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.LEFT or Gravity.TOP,
+                Gravity.START or Gravity.TOP,
                 22,
                 0,
                 0,
@@ -119,16 +122,18 @@ object DialogHelper {
         )
 
         val titleView = TextView(context)
-        titleView.text = "Schedule message"
-        titleView.setTextColor(Color.WHITE)
-        titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20f)
-        titleView.setTypeface(ResourcesCompat.getFont(context, R.font.roboto_medium))
+        titleView.text = unifiedDateTimePicker.title
+        titleView.setTextColor(unifiedDateTimePicker.titleTextColor)
+        titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,
+            unifiedDateTimePicker.titleTextSize.toFloat()
+        )
+        titleView.typeface = unifiedDateTimePicker.titleTypeface
         titleLayout.addView(
             titleView,
             createFrame(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT.toFloat(),
-                Gravity.LEFT or Gravity.TOP,
+                Gravity.START or Gravity.TOP,
                 0f,
                 12f,
                 0f,
@@ -180,10 +185,12 @@ object DialogHelper {
         val onValueChangeListener = object : NumberPicker.OnValueChangeListener {
             override fun onValueChange(picker: NumberPicker?, oldVal: Int, newVal: Int) {
                 try {
-                    container.performHapticFeedback(
-                        HapticFeedbackConstants.KEYBOARD_TAP,
-                        HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-                    )
+                    if (unifiedDateTimePicker.enableVibration) {
+                        container.performHapticFeedback(
+                            HapticFeedbackConstants.KEYBOARD_TAP,
+                            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                        )
+                    }
                 } catch (ignore: Exception) {
                 }
                 checkScheduleDate(buttonTextView, null, 0, dayPicker, hourPicker, minutePicker)
@@ -235,13 +242,13 @@ object DialogHelper {
 
         buttonTextView.setPadding(dp(34f), 0, dp(34f), 0)
         buttonTextView.gravity = Gravity.CENTER
-        buttonTextView.setTextColor(Color.WHITE)
-        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-        buttonTextView.setTypeface(ResourcesCompat.getFont(context, R.font.roboto_medium))
+        buttonTextView.setTextColor(unifiedDateTimePicker.buttonTextColor)
+        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, unifiedDateTimePicker.buttonTextSize.toFloat())
+        buttonTextView.typeface = unifiedDateTimePicker.buttonTypeface
         buttonTextView.setBackgroundDrawable(
             createSimpleSelectorRoundRectDrawable(
                 dp(4f),
-                Color.BLUE,
+                unifiedDateTimePicker.buttonColor,
                 Color.GRAY
             )
         )
@@ -250,13 +257,14 @@ object DialogHelper {
             createLinear(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 48,
-                Gravity.LEFT or Gravity.BOTTOM,
+                Gravity.START or Gravity.BOTTOM,
                 16,
                 15,
                 16,
                 16
             )
         )
+
         buttonTextView.setOnClickListener { v: View? ->
             canceled[0] = false
             val setSeconds =
@@ -268,14 +276,14 @@ object DialogHelper {
             if (setSeconds) {
                 calendar[Calendar.SECOND] = 0
             }
-            datePickerDelegate.didSelectDate(true, calendar.timeInMillis)
+            unifiedDateTimePicker.onDateTimeSelected?.onDateTimeSelected(calendar.timeInMillis)
             builder.dismissRunnable.run()
         }
 
         builder.setCustomView(container)
         val bottomSheet = builder.show()
-        bottomSheet.setOnDismissListener { dialog: DialogInterface? -> Log.d("aaaa", "dismissed") }
-        bottomSheet.setBackgroundColor(Color.RED)
+        //bottomSheet.setOnDismissListener { dialog: DialogInterface? -> Log.d("aaaa", "dismissed") }
+        bottomSheet.setBackgroundColor(unifiedDateTimePicker.backgroundColor)
 
         return builder
     }
@@ -511,9 +519,5 @@ object DialogHelper {
             stateListDrawable.addState(StateSet.WILD_CARD, defaultDrawable)
             stateListDrawable
         }
-    }
-
-    interface ScheduleDatePickerDelegate {
-        fun didSelectDate(notify: Boolean, scheduleDate: Long)
     }
 }
