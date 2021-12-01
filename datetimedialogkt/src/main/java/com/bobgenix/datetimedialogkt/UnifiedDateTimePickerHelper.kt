@@ -57,6 +57,7 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         dayPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         dayPicker.setTextOffset(dp(10f))
         dayPicker.setItemCount(5)
+        dayPicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
 
         val hourPicker: NumberPicker = object : NumberPicker(context) {
             override fun getContentDescription(value: Int): CharSequence {
@@ -66,6 +67,7 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         hourPicker.setItemCount(5)
         hourPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         hourPicker.setTextOffset(-dp(10f))
+        hourPicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
 
         val minutePicker: NumberPicker = object : NumberPicker(context) {
             override fun getContentDescription(value: Int): CharSequence {
@@ -75,6 +77,7 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         minutePicker.setItemCount(5)
         minutePicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
         minutePicker.setTextOffset(-dp(34f))
+        minutePicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
 
         val container: LinearLayout = object : LinearLayout(context) {
             var ignoreLayout = false

@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
             UnifiedDateTimePicker.Builder(context = this)
                 .title("Select Date and time")
                 .vibration(true)
+                .buttonColor(Color.BLACK)
                 .addListener(object : OnDateTimeSelectedListener {
                     override fun onDateTimeSelected(millis: Long) {
                         val sdf = SimpleDateFormat(DATE_FORMAT_Z, Locale.ROOT)

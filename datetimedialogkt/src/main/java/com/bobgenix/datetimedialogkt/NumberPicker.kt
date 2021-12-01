@@ -35,8 +35,10 @@ import com.bobgenix.datetimedialogkt.AndroidUtilities.dp
 import java.util.*
 import kotlin.math.abs
 
-open class NumberPicker @JvmOverloads constructor(context: Context, textSize: Int = 18) :
-    LinearLayout(context) {
+open class NumberPicker @JvmOverloads constructor(
+    context: Context,
+    textSize: Int = 18,
+) : LinearLayout(context) {
 
     private var SELECTOR_WHEEL_ITEM_COUNT = 3
     private var SELECTOR_MIDDLE_ITEM_INDEX = SELECTOR_WHEEL_ITEM_COUNT / 2
@@ -125,7 +127,7 @@ open class NumberPicker @JvmOverloads constructor(context: Context, textSize: In
     private fun init() {
         mSolidColor = 0
         mSelectionDivider = Paint()
-        mSelectionDivider?.color = Color.WHITE
+        mSelectionDivider?.color = Color.BLUE
 
         mSelectionDividerHeight = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -223,7 +225,7 @@ open class NumberPicker @JvmOverloads constructor(context: Context, textSize: In
     }
 
     fun setSelectorColor(color: Int) {
-        mSelectionDivider!!.color = color
+        mSelectionDivider?.color = color
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
