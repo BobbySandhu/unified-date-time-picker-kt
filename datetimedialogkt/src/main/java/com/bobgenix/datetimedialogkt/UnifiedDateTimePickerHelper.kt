@@ -223,15 +223,15 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         linearLayout.addView(minutePicker, createLinear(0, 54 * 5, 0.3f))
         minutePicker.setOnValueChangedListener(onValueChangeListener)
 
-        if (currentDate > 0 && currentDate != 0x7FFFFFFEL) {
-            currentDate *= 1000
+        if (unifiedDateTimePicker.milliseconds > 0L && unifiedDateTimePicker.milliseconds > currentTime) {
             calendar.timeInMillis = System.currentTimeMillis()
             calendar[Calendar.MINUTE] = 0
             calendar[Calendar.SECOND] = 0
             calendar[Calendar.MILLISECOND] = 0
             calendar[Calendar.HOUR_OF_DAY] = 0
-            val days = ((currentDate - calendar.timeInMillis) / (24 * 60 * 60 * 1000)).toInt()
-            calendar.timeInMillis = currentDate
+            val days =
+                (((unifiedDateTimePicker.milliseconds - currentTime) / (24 * 60 * 60 * 1000))).toInt()
+            calendar.timeInMillis = unifiedDateTimePicker.milliseconds
             if (days >= 0) {
                 minutePicker.setValue(calendar[Calendar.MINUTE])
                 hourPicker.setValue(calendar[Calendar.HOUR_OF_DAY])

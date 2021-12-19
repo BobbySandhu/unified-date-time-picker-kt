@@ -18,7 +18,8 @@ class UnifiedDateTimePicker private constructor(
     internal var enableVibration: Boolean = true,
     internal var titleTextSize: Int = 20,
     internal var buttonTextSize: Int = 14,
-    internal var onDateTimeSelected: OnDateTimeSelectedListener? = null
+    internal var onDateTimeSelected: OnDateTimeSelectedListener? = null,
+    internal var milliseconds: Long = 0L
 ) {
 
     data class Builder(
@@ -34,7 +35,8 @@ class UnifiedDateTimePicker private constructor(
         internal var enableVibration: Boolean = true,
         internal var titleTextSize: Int = 20,
         internal var buttonTextSize: Int = 14,
-        internal var onDateTimeSelected: OnDateTimeSelectedListener? = null
+        internal var onDateTimeSelected: OnDateTimeSelectedListener? = null,
+        internal var milliseconds: Long = 0L
     ) {
         fun title(title: String) = apply {
             this.title = title
@@ -84,6 +86,10 @@ class UnifiedDateTimePicker private constructor(
             onDateTimeSelected = listener
         }
 
+        fun setDateTimeMillis(millis: Long) = apply {
+            milliseconds = millis
+        }
+
         private fun build() = UnifiedDateTimePicker(
             context,
             title,
@@ -97,7 +103,8 @@ class UnifiedDateTimePicker private constructor(
             enableVibration,
             titleTextSize,
             buttonTextSize,
-            onDateTimeSelected
+            onDateTimeSelected,
+            milliseconds
         )
 
         fun show() {
