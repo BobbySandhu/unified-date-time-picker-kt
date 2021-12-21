@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bleached_cedar">#261C2C</color>
+    <color name="ship_cove">#6E85B2</color>
 </resources>

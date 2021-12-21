@@ -1,16 +1,13 @@
 package com.bobgenix.datetimedialogkt
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.StateListDrawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
-import android.util.Log
 import android.util.StateSet
 import android.util.TypedValue
 import android.view.*
@@ -19,13 +16,12 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.res.ResourcesCompat
 import com.bobgenix.datetimedialogkt.AndroidUtilities.dp
 import com.bobgenix.datetimedialogkt.Constants.DATE_FORMAT_LONG
 import com.bobgenix.datetimedialogkt.Constants.DATE_FORMAT_SHORT
 import java.util.*
 
-internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: UnifiedDateTimePicker) {
+internal class UnifiedDateTimePickerHelper(private val unifiedDateTimePicker: UnifiedDateTimePicker) {
 
     var locale = Locale("en")
     var formatterScheduleDay = createFormatter(locale, DATE_FORMAT_SHORT, DATE_FORMAT_SHORT)
@@ -38,7 +34,10 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
     ): BottomSheet.Builder {
         var currentDate = currentDateValue
 
-        AndroidUtilities.checkDisplaySize(unifiedDateTimePicker.context, unifiedDateTimePicker.context.resources.configuration)
+        AndroidUtilities.checkDisplaySize(
+            unifiedDateTimePicker.context,
+            unifiedDateTimePicker.context.resources.configuration
+        )
 
         formatterScheduleSend[0] =
             createFormatter(locale, "'Send today at' HH:mm", "'Send today at' HH:mm")
@@ -54,7 +53,13 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         builder.setApplyBottomPadding(false)
 
         val dayPicker = NumberPicker(context)
-        dayPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
+        dayPicker.setTextColor(
+            if (Build.VERSION.SDK_INT >= 23) context.resources.getColor(
+                unifiedDateTimePicker.dateTimeTextColor,
+                null
+            ) else
+                context.resources.getColor(unifiedDateTimePicker.dateTimeTextColor)
+        )
         dayPicker.setTextOffset(dp(10f))
         dayPicker.setItemCount(5)
         dayPicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
@@ -65,7 +70,16 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
             }
         }
         hourPicker.setItemCount(5)
-        hourPicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
+        hourPicker.setTextColor(
+            if (Build.VERSION.SDK_INT >= 23)
+                context.resources.getColor(
+                    unifiedDateTimePicker.dateTimeTextColor,
+                    null
+                )
+            else context.resources.getColor(
+                unifiedDateTimePicker.dateTimeTextColor
+            )
+        )
         hourPicker.setTextOffset(-dp(10f))
         hourPicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
 
@@ -75,7 +89,17 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
             }
         }
         minutePicker.setItemCount(5)
-        minutePicker.setTextColor(unifiedDateTimePicker.dateTimeTextColor)
+        minutePicker.setTextColor(
+            if (Build.VERSION.SDK_INT >= 23)
+                context.resources.getColor(
+                    unifiedDateTimePicker.dateTimeTextColor,
+                    null
+                )
+            else context.resources.getColor(
+                unifiedDateTimePicker.dateTimeTextColor
+
+            )
+        )
         minutePicker.setTextOffset(-dp(34f))
         minutePicker.setSelectorColor(unifiedDateTimePicker.buttonColor)
 
@@ -84,11 +108,12 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 ignoreLayout = true
 
-                val count: Int = if (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y) {
-                    3
-                } else {
-                    5
-                }
+                val count: Int =
+                    if (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y) {
+                        3
+                    } else {
+                        5
+                    }
 
                 dayPicker.setItemCount(count)
                 hourPicker.setItemCount(count)
@@ -126,8 +151,19 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
 
         val titleView = TextView(context)
         titleView.text = unifiedDateTimePicker.title
-        titleView.setTextColor(unifiedDateTimePicker.titleTextColor)
-        titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,
+        titleView.setTextColor(
+            if (Build.VERSION.SDK_INT >= 23)
+                context.resources.getColor(
+                    unifiedDateTimePicker.titleTextColor,
+                    null
+                ) else
+                context.resources.getColor(
+                    unifiedDateTimePicker.titleTextColor
+
+                )
+        )
+        titleView.setTextSize(
+            TypedValue.COMPLEX_UNIT_DIP,
             unifiedDateTimePicker.titleTextSize.toFloat()
         )
         titleView.typeface = unifiedDateTimePicker.titleTypeface
@@ -245,8 +281,21 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
 
         buttonTextView.setPadding(dp(34f), 0, dp(34f), 0)
         buttonTextView.gravity = Gravity.CENTER
-        buttonTextView.setTextColor(unifiedDateTimePicker.buttonTextColor)
-        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, unifiedDateTimePicker.buttonTextSize.toFloat())
+        buttonTextView.setTextColor(
+            if (Build.VERSION.SDK_INT >= 23)
+                context.resources.getColor(
+                    unifiedDateTimePicker.buttonTextColor,
+                    null
+                )
+            else context.resources.getColor(
+                unifiedDateTimePicker.buttonTextColor
+
+            )
+        )
+        buttonTextView.setTextSize(
+            TypedValue.COMPLEX_UNIT_DIP,
+            unifiedDateTimePicker.buttonTextSize.toFloat()
+        )
         buttonTextView.typeface = unifiedDateTimePicker.buttonTypeface
         buttonTextView.setBackgroundDrawable(
             createSimpleSelectorRoundRectDrawable(
@@ -286,7 +335,11 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
         builder.setCustomView(container)
         val bottomSheet = builder.show()
         //bottomSheet.setOnDismissListener { dialog: DialogInterface? -> Log.d("aaaa", "dismissed") }
-        bottomSheet.setBackgroundColor(unifiedDateTimePicker.backgroundColor)
+        bottomSheet.setBackgroundColor(
+            if (Build.VERSION.SDK_INT >= 23)
+                context.resources.getColor(unifiedDateTimePicker.backgroundColor, null)
+            else context.resources.getColor(unifiedDateTimePicker.backgroundColor)
+        )
 
         return builder
     }
@@ -493,7 +546,9 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
                 ), null, null
             )
         )
-        defaultDrawable.paint.color = defaultColor
+        defaultDrawable.paint.color = if (Build.VERSION.SDK_INT >= 23)
+            unifiedDateTimePicker.context.resources.getColor(defaultColor, null)
+        else unifiedDateTimePicker.context.resources.getColor(defaultColor)
         val pressedDrawable = ShapeDrawable(
             RoundRectShape(
                 floatArrayOf(
@@ -509,18 +564,10 @@ internal class UnifiedDateTimePickerHelper (private val unifiedDateTimePicker: U
             )
         )
         pressedDrawable.paint.color = maskColor
-        return if (Build.VERSION.SDK_INT >= 21) {
-            val colorStateList = ColorStateList(
-                arrayOf(StateSet.WILD_CARD),
-                intArrayOf(pressedColor)
-            )
-            RippleDrawable(colorStateList, defaultDrawable, pressedDrawable)
-        } else {
-            val stateListDrawable = StateListDrawable()
-            stateListDrawable.addState(intArrayOf(android.R.attr.state_pressed), pressedDrawable)
-            stateListDrawable.addState(intArrayOf(android.R.attr.state_selected), pressedDrawable)
-            stateListDrawable.addState(StateSet.WILD_CARD, defaultDrawable)
-            stateListDrawable
-        }
+        val colorStateList = ColorStateList(
+            arrayOf(StateSet.WILD_CARD),
+            intArrayOf(pressedColor)
+        )
+        return RippleDrawable(colorStateList, defaultDrawable, pressedDrawable)
     }
 }

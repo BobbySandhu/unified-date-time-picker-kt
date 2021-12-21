@@ -225,7 +225,7 @@ open class NumberPicker @JvmOverloads constructor(
     }
 
     fun setSelectorColor(color: Int) {
-        mSelectionDivider?.color = color
+        mSelectionDivider?.color = context.resources.getColor(color, null)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
