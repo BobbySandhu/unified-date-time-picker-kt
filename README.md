@@ -68,8 +68,8 @@ With all these customizations applied, it would look like:
     
     // Project level dependencies section
     dependencies {
-        implementation "com.goterl:lazysodium-android:VERSION_NUMBER@aar"
-        implementation "net.java.dev.jna:jna:5.8.0@aar"
+        implementation ""
+        implementation ""
     }
 
 Want to extend the feature, have any improvement or bug fix? 
