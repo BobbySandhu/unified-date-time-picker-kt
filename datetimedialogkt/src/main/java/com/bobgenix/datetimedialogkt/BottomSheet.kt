@@ -21,7 +21,10 @@ import android.view.animation.Interpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import com.bobgenix.datetimedialogkt.AndroidUtilities.createFrame
 import kotlin.math.abs
 
@@ -84,9 +87,7 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
         touchSlop = vc.scaledTouchSlop
 
         val padding = Rect()
-        shadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.sheet_shadow_round, null)?.mutate()
-        shadowDrawable?.colorFilter = PorterDuffColorFilter(colorFFFF, PorterDuff.Mode.MULTIPLY)
-        shadowDrawable?.getPadding(padding)
+        shadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.rounded_top_corners, null)?.mutate()
         backgroundPaddingLeft = padding.left
         backgroundPaddingTop = padding.top
 
@@ -155,7 +156,7 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 }
 
             }
-            containerView?.setBackgroundDrawable(shadowDrawable)
+            containerView?.background = shadowDrawable
             containerView?.setPadding(
                 backgroundPaddingLeft,
                 (if (applyTopPadding) AndroidUtilities.dp(8f) else 0) + backgroundPaddingTop - 1,
@@ -326,7 +327,10 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
     }
 
     fun setBackgroundColor(color: Int) {
-        shadowDrawable?.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
+        shadowDrawable?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+            ContextCompat.getColor(context, color),
+            BlendModeCompat.SRC_ATOP
+        )
     }
 
     internal fun canDismissWithSwipe(): Boolean {

@@ -336,9 +336,7 @@ internal class UnifiedDateTimePickerHelper(private val unifiedDateTimePicker: Un
         val bottomSheet = builder.show()
         //bottomSheet.setOnDismissListener { dialog: DialogInterface? -> Log.d("aaaa", "dismissed") }
         bottomSheet.setBackgroundColor(
-            if (Build.VERSION.SDK_INT >= 23)
-                context.resources.getColor(unifiedDateTimePicker.backgroundColor, null)
-            else context.resources.getColor(unifiedDateTimePicker.backgroundColor)
+            unifiedDateTimePicker.backgroundColor
         )
 
         return builder
