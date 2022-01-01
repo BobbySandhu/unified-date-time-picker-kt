@@ -18,3 +18,5 @@ local.properties
 .idea/gradle.xml
 .idea/compiler.xml
 .idea/misc.xml
+gradle.properties
+datetimedialogkt/private.kbx

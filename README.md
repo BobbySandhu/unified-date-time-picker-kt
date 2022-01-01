@@ -66,7 +66,7 @@ With all these customizations applied, it would look like:
         mavenCentral()
     }
     
-    // Project level dependencies section
+    // app level dependencies section
     dependencies {
         implementation ""
         implementation ""
