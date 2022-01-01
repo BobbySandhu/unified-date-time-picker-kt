@@ -68,8 +68,7 @@ With all these customizations applied, it would look like:
     
     // app level dependencies section
     dependencies {
-        implementation ""
-        implementation ""
+        implementation 'io.github.bobbysandhu:unified-date-time-picker-kt:1.0.0'
     }
 
 Want to extend the feature, have any improvement or bug fix? 
