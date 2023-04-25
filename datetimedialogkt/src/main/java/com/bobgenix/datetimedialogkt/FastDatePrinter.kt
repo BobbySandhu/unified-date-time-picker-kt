@@ -25,6 +25,7 @@ import java.text.FieldPosition
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import kotlin.math.max
 
 /**
  *
@@ -64,7 +65,7 @@ import java.util.concurrent.ConcurrentMap
  * @version $Id: FastDatePrinter.java 1567799 2014-02-12 23:25:58Z sebb $
  * @since 3.2
  */
-internal class FastDatePrinter(
+internal open class FastDatePrinter(
     /**
      * The pattern.
      */
@@ -128,12 +129,12 @@ internal class FastDatePrinter(
     private fun parsePattern(): List<Rule> {
         val symbols = DateFormatSymbols(mLocale)
         val rules: MutableList<Rule> = ArrayList()
-        val ERAs = symbols.eras
+        val eras = symbols.eras
         val months = symbols.months
         val shortMonths = symbols.shortMonths
         val weekdays = symbols.weekdays
         val shortWeekdays = symbols.shortWeekdays
-        val AmPmStrings = symbols.amPmStrings
+        val amPmStrings = symbols.amPmStrings
         val length = mPattern.length
         val indexRef = IntArray(1)
         var i = 0
@@ -148,12 +149,13 @@ internal class FastDatePrinter(
             var rule: Rule
             val c = token[0]
             rule = when (c) {
-                'G' -> TextField(Calendar.ERA, ERAs)
+                'G' -> TextField(Calendar.ERA, eras)
                 'y' -> if (tokenLen == 2) {
                     TwoDigitYearField.INSTANCE
                 } else {
                     selectNumberRule(Calendar.YEAR, if (tokenLen < 4) 4 else tokenLen)
                 }
+
                 'L' -> if (tokenLen >= 4) {
                     TextField(
                         Calendar.MONTH,
@@ -169,6 +171,7 @@ internal class FastDatePrinter(
                 } else {
                     UnpaddedMonthField.INSTANCE
                 }
+
                 'M' -> if (tokenLen >= 4) {
                     TextField(
                         Calendar.MONTH,
@@ -184,6 +187,7 @@ internal class FastDatePrinter(
                 } else {
                     UnpaddedMonthField.INSTANCE
                 }
+
                 'd' -> selectNumberRule(Calendar.DAY_OF_MONTH, tokenLen)
                 'h' -> TwelveHourField(selectNumberRule(Calendar.HOUR, tokenLen))
                 'H' -> selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen)
@@ -194,14 +198,16 @@ internal class FastDatePrinter(
                     Calendar.DAY_OF_WEEK,
                     if (tokenLen < 4) shortWeekdays else weekdays
                 )
+
                 'D' -> selectNumberRule(Calendar.DAY_OF_YEAR, tokenLen)
                 'F' -> selectNumberRule(Calendar.DAY_OF_WEEK_IN_MONTH, tokenLen)
                 'w' -> selectNumberRule(Calendar.WEEK_OF_YEAR, tokenLen)
                 'W' -> selectNumberRule(Calendar.WEEK_OF_MONTH, tokenLen)
                 'a' -> TextField(
                     Calendar.AM_PM,
-                    AmPmStrings
+                    amPmStrings
                 )
+
                 'k' -> TwentyFourHourField(selectNumberRule(Calendar.HOUR_OF_DAY, tokenLen))
                 'K' -> selectNumberRule(Calendar.HOUR, tokenLen)
                 'z' -> if (tokenLen >= 4) {
@@ -209,11 +215,13 @@ internal class FastDatePrinter(
                 } else {
                     TimeZoneNameRule(mTimeZone, mLocale, TimeZone.SHORT)
                 }
+
                 'Z' -> if (tokenLen == 1) {
                     TimeZoneNumberRule.INSTANCE_NO_COLON
                 } else {
                     TimeZoneNumberRule.INSTANCE_COLON
                 }
+
                 '\'' -> {
                     val sub = token.substring(1)
                     if (sub.length == 1) {
@@ -222,6 +230,7 @@ internal class FastDatePrinter(
                         StringLiteral(sub)
                     }
                 }
+
                 else -> throw IllegalArgumentException("Illegal pattern component: $token")
             }
             rules.add(rule)
@@ -238,12 +247,12 @@ internal class FastDatePrinter(
      * @param indexRef index references
      * @return parsed token
      */
-    protected fun parseToken(pattern: String, indexRef: IntArray): String {
+    private fun parseToken(pattern: String, indexRef: IntArray): String {
         val buf = StringBuilder()
         var i = indexRef[0]
         val length = pattern.length
         var c = pattern[i]
-        if (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z') {
+        if (c in 'A'..'Z' || c in 'a'..'z') {
             // Scan a run of the same character, which indicates a time
             // pattern.
             buf.append(c)
@@ -271,7 +280,7 @@ internal class FastDatePrinter(
                         inLiteral = !inLiteral
                     }
                 } else if (!inLiteral &&
-                    (c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z')
+                    (c in 'A'..'Z' || c in 'a'..'z')
                 ) {
                     i--
                     break
@@ -289,7 +298,7 @@ internal class FastDatePrinter(
      *
      * Gets an appropriate rule for the padding required.
      *
-     * @param field   the field to get a rule for
+     * @param mField   the field to get a rule for
      * @param padding the padding required
      * @return a new rule with the correct padding
      */
@@ -313,17 +322,25 @@ internal class FastDatePrinter(
      * @return the buffer passed in
      */
     override fun format(obj: Any, toAppendTo: StringBuffer, pos: FieldPosition): StringBuffer {
-        return if (obj is Date) {
-            format(obj, toAppendTo)
-        } else if (obj is Calendar) {
-            format(obj, toAppendTo)
-        } else if (obj is Long) {
-            format(obj.toLong(), toAppendTo)
-        } else {
-            throw IllegalArgumentException(
-                "Unknown class: " +
-                        (if (obj == null) "<null>" else obj.javaClass.name)
-            )
+        return when (obj) {
+            is Date -> {
+                format(obj, toAppendTo)
+            }
+
+            is Calendar -> {
+                format(obj, toAppendTo)
+            }
+
+            is Long -> {
+                format(obj.toLong(), toAppendTo)
+            }
+
+            else -> {
+                throw IllegalArgumentException(
+                    "Unknown class: " +
+                            (obj.javaClass.name)
+                )
+            }
         }
     }
 
@@ -404,7 +421,7 @@ internal class FastDatePrinter(
      * @param buf      the buffer to format into
      * @return the specified string buffer
      */
-    fun applyRules(calendar: Calendar, buf: StringBuffer): StringBuffer {
+    private fun applyRules(calendar: Calendar, buf: StringBuffer): StringBuffer {
         for (rule in mRules) {
             rule.appendTo(buf, calendar)
         }
@@ -439,14 +456,13 @@ internal class FastDatePrinter(
      *
      * Compares two objects for equality.
      *
-     * @param obj the object to compare to
+     * @param other the object to compare to
      * @return `true` if equal
      */
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is FastDatePrinter) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is FastDatePrinter) {
             return false
         }
-        val other = obj
         return mPattern == other.mPattern && mTimeZone == other.mTimeZone && mLocale == other.mLocale
     }
 
@@ -530,7 +546,7 @@ internal class FastDatePrinter(
      * Constructs a new instance of `CharacterLiteral`
      * to hold the specified value.
      *
-     * @param value the character literal
+     * @param mValue the character literal
      */ internal constructor(private val mValue: Char) : Rule {
         /**
          * {@inheritDoc}
@@ -556,7 +572,7 @@ internal class FastDatePrinter(
      * Constructs a new instance of `StringLiteral`
      * to hold the specified value.
      *
-     * @param value the string literal
+     * @param mValue the string literal
      */ internal constructor(private val mValue: String) : Rule {
         /**
          * {@inheritDoc}
@@ -582,8 +598,8 @@ internal class FastDatePrinter(
      * Constructs an instance of `TextField`
      * with the specified field and values.
      *
-     * @param field  the field
-     * @param values the field values
+     * @param mField  the field
+     * @param mValues the field values
      */ internal constructor(private val mField: Int, private val mValues: Array<String>) : Rule {
         /**
          * {@inheritDoc}
@@ -616,7 +632,7 @@ internal class FastDatePrinter(
     /**
      * Constructs an instance of `UnpadedNumberField` with the specified field.
      *
-     * @param field the field
+     * @param mField the field
      */ internal constructor(private val mField: Int) : NumberRule {
         /**
          * {@inheritDoc}
@@ -637,12 +653,12 @@ internal class FastDatePrinter(
          */
         override fun appendTo(buffer: StringBuffer, value: Int) {
             if (value < 10) {
-                buffer.append((value + '0'.toInt()).toChar())
+                buffer.append((value + '0'.code).toChar())
             } else if (value < 100) {
-                buffer.append((value / 10 + '0'.toInt()).toChar())
-                buffer.append((value % 10 + '0'.toInt()).toChar())
+                buffer.append((value / 10 + '0'.code).toChar())
+                buffer.append((value % 10 + '0'.code).toChar())
             } else {
-                buffer.append(Integer.toString(value))
+                buffer.append(value.toString())
             }
         }
     }
@@ -675,10 +691,10 @@ internal class FastDatePrinter(
          */
         override fun appendTo(buffer: StringBuffer, value: Int) {
             if (value < 10) {
-                buffer.append((value + '0'.toInt()).toChar())
+                buffer.append((value + '0'.code).toChar())
             } else {
-                buffer.append((value / 10 + '0'.toInt()).toChar())
-                buffer.append((value % 10 + '0'.toInt()).toChar())
+                buffer.append((value / 10 + '0'.code).toChar())
+                buffer.append((value % 10 + '0'.code).toChar())
             }
         }
 
@@ -718,27 +734,26 @@ internal class FastDatePrinter(
                 while (--i >= 2) {
                     buffer.append('0')
                 }
-                buffer.append((value / 10 + '0'.toInt()).toChar())
-                buffer.append((value % 10 + '0'.toInt()).toChar())
+                buffer.append((value / 10 + '0'.code).toChar())
+                buffer.append((value % 10 + '0'.code).toChar())
             } else {
-                val digits: Int
-                digits = if (value < 1000) {
+                val digits: Int = if (value < 1000) {
                     3
                 } else {
-                    Integer.toString(value).length
+                    value.toString().length
                 }
                 var i = mSize
                 while (--i >= digits) {
                     buffer.append('0')
                 }
-                buffer.append(Integer.toString(value))
+                buffer.append(value.toString())
             }
         }
 
         /**
          * Constructs an instance of `PaddedNumberField`.
          *
-         * @param field the field
+         * @param mField the field
          * @param size  size of the output field
          */
         init {
@@ -757,7 +772,7 @@ internal class FastDatePrinter(
     /**
      * Constructs an instance of `TwoDigitNumberField` with the specified field.
      *
-     * @param field the field
+     * @param mField the field
      */ internal constructor(private val mField: Int) : NumberRule {
         /**
          * {@inheritDoc}
@@ -778,10 +793,10 @@ internal class FastDatePrinter(
          */
         override fun appendTo(buffer: StringBuffer, value: Int) {
             if (value < 100) {
-                buffer.append((value / 10 + '0'.toInt()).toChar())
-                buffer.append((value % 10 + '0'.toInt()).toChar())
+                buffer.append((value / 10 + '0'.code).toChar())
+                buffer.append((value % 10 + '0'.code).toChar())
             } else {
-                buffer.append(Integer.toString(value))
+                buffer.append(value.toString())
             }
         }
     }
@@ -813,8 +828,8 @@ internal class FastDatePrinter(
          * {@inheritDoc}
          */
         override fun appendTo(buffer: StringBuffer, value: Int) {
-            buffer.append((value / 10 + '0'.toInt()).toChar())
-            buffer.append((value % 10 + '0'.toInt()).toChar())
+            buffer.append((value / 10 + '0'.code).toChar())
+            buffer.append((value % 10 + '0'.code).toChar())
         }
 
         companion object {
@@ -849,8 +864,8 @@ internal class FastDatePrinter(
          * {@inheritDoc}
          */
         override fun appendTo(buffer: StringBuffer, value: Int) {
-            buffer.append((value / 10 + '0'.toInt()).toChar())
-            buffer.append((value % 10 + '0'.toInt()).toChar())
+            buffer.append((value / 10 + '0'.code).toChar())
+            buffer.append((value % 10 + '0'.code).toChar())
         }
 
         companion object {
@@ -951,7 +966,7 @@ internal class FastDatePrinter(
             // We have no access to the Calendar object that will be passed to
             // appendTo so base estimate on the TimeZone passed to the
             // constructor
-            return Math.max(mStandard!!.length, mDaylight!!.length)
+            return max(mStandard!!.length, mDaylight!!.length)
         }
 
         /**
@@ -1011,14 +1026,14 @@ internal class FastDatePrinter(
                 buffer.append('+')
             }
             val hours = offset / (60 * 60 * 1000)
-            buffer.append((hours / 10 + '0'.toInt()).toChar())
-            buffer.append((hours % 10 + '0'.toInt()).toChar())
+            buffer.append((hours / 10 + '0'.code).toChar())
+            buffer.append((hours % 10 + '0'.code).toChar())
             if (mColon) {
                 buffer.append(':')
             }
             val minutes = offset / (60 * 1000) - 60 * hours
-            buffer.append((minutes / 10 + '0'.toInt()).toChar())
-            buffer.append((minutes % 10 + '0'.toInt()).toChar())
+            buffer.append((minutes / 10 + '0'.code).toChar())
+            buffer.append((minutes % 10 + '0'.code).toChar())
         }
 
         companion object {
@@ -1053,8 +1068,7 @@ internal class FastDatePrinter(
                 return true
             }
             if (obj is TimeZoneDisplayKey) {
-                val other = obj
-                return mTimeZone == other.mTimeZone && mStyle == other.mStyle && mLocale == other.mLocale
+                return mTimeZone == obj.mTimeZone && mStyle == obj.mStyle && mLocale == obj.mLocale
             }
             return false
         }

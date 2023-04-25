@@ -24,12 +24,19 @@ class MainActivity : AppCompatActivity() {
         binding.buttonMy.setOnClickListener {
 
             UnifiedDateTimePicker.Builder(context = this)
-                .title("Select Date and time")
+                .title("Choix dans la date : ")
                 .titleTextColor(R.color.white)
                 .backgroundColor(R.color.big_stone)
                 .dateTimeTextColor(R.color.white)
                 .buttonColor(R.color.picton_blue)
                 .buttonTextColor(R.color.white)
+                .setTodayText("Aujourd'hui")
+                .setLocale(Locale.getDefault() ?: Locale.FRENCH)
+                .setButtonText(
+                    "'Envoyer auj. à ' HH:mm",
+                    "'Envoyer le' d MMM yyyy 'à' HH:mm",
+                    "'Envoyer le' d MMM yyyy 'à' HH:mm"
+                )
                 .addListener(object : OnDateTimeSelectedListener {
                     override fun onDateTimeSelected(millis: Long) {
                         val sdf = SimpleDateFormat(DATE_FORMAT, Locale.ROOT)
