@@ -26,7 +26,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import com.bobgenix.datetimedialogkt.AndroidUtilities.createFrame
-import com.datetimedemokt.R
 import kotlin.math.abs
 
 internal class BottomSheet(context: Context) : Dialog(context, R.style.TransparentDialog) {
@@ -634,9 +633,12 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 val dy = (ev.y.toInt() - startedTrackingY).toFloat()
                 velocityTracker!!.addMovement(ev)
 
-                if (maybeStartTracking && !startedTracking && dy > 0 && dy / 3.0f > Math.abs(dx) && Math.abs(
-                        dy
-                    ) >= touchSlop
+                if (
+                    maybeStartTracking
+                    && !startedTracking
+                    && dy > 0
+                    && dy / 3.0f > Math.abs(dx)
+                    && Math.abs(dy) >= touchSlop
                 ) {
                     startedTrackingY = ev.y.toInt()
                     maybeStartTracking = false
@@ -709,8 +711,8 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
             }
 
             if (lastInsets != null) {
-                width -= (lastInsets?.systemWindowInsetRight
-                    ?: 0) + (lastInsets?.systemWindowInsetLeft ?: 0)
+                width -= (lastInsets?.systemWindowInsetRight ?: 0) +
+                        (lastInsets?.systemWindowInsetLeft ?: 0)
             }
 
             val isPortrait = width < height
@@ -760,8 +762,8 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 left += lastInsets?.systemWindowInsetLeft ?: 0
                 right -= lastInsets?.systemWindowInsetRight ?: 0
 
-                t -= (lastInsets?.systemWindowInsetBottom
-                    ?: 0) - if (drawNavigationBar) 0 else bottomInset
+                t -= (lastInsets?.systemWindowInsetBottom?: 0) -
+                        if (drawNavigationBar) 0 else bottomInset
                 if (Build.VERSION.SDK_INT >= 29) {
                     t -= getAdditionalMandatoryOffsets()
                 }

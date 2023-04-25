@@ -336,10 +336,7 @@ internal open class FastDatePrinter(
             }
 
             else -> {
-                throw IllegalArgumentException(
-                    "Unknown class: " +
-                            (obj.javaClass.name)
-                )
+                throw IllegalArgumentException("Unknown class: " + (obj.javaClass.name))
             }
         }
     }

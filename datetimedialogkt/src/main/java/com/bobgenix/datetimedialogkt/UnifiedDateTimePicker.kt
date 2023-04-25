@@ -3,7 +3,6 @@ package com.bobgenix.datetimedialogkt
 import android.content.Context
 import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
-import com.datetimedemokt.R
 import java.util.Locale
 
 class UnifiedDateTimePicker private constructor(
