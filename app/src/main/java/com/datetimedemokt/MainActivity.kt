@@ -1,6 +1,5 @@
 package com.datetimedemokt
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bobgenix.datetimedialogkt.OnDateTimeSelectedListener
@@ -30,6 +29,13 @@ class MainActivity : AppCompatActivity() {
                 .dateTimeTextColor(R.color.white)
                 .buttonColor(R.color.picton_blue)
                 .buttonTextColor(R.color.white)
+                .setTodayText("Today")
+                .setLocale(Locale.getDefault() ?: Locale.ENGLISH)
+                .setButtonText(
+                    "'Today' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm"
+                )
                 .addListener(object : OnDateTimeSelectedListener {
                     override fun onDateTimeSelected(millis: Long) {
                         val sdf = SimpleDateFormat(DATE_FORMAT, Locale.ROOT)

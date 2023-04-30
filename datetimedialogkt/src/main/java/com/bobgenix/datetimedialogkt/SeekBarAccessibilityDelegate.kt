@@ -24,7 +24,7 @@ internal abstract class SeekBarAccessibilityDelegate : View.AccessibilityDelegat
             }
         }
 
-    override fun performAccessibilityAction(host: View, action: Int, args: Bundle): Boolean {
+    override fun performAccessibilityAction(host: View, action: Int, args: Bundle?): Boolean {
         return if (super.performAccessibilityAction(host, action, args)) {
             true
         } else performAccessibilityActionInternal(host, action, args)

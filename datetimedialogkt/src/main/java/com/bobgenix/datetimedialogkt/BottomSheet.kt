@@ -87,11 +87,13 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
         touchSlop = vc.scaledTouchSlop
 
         val padding = Rect()
-        shadowDrawable = ResourcesCompat.getDrawable(context.resources, R.drawable.rounded_top_corners, null)?.mutate()
+        shadowDrawable =
+            ResourcesCompat.getDrawable(context.resources, R.drawable.rounded_top_corners, null)
+                ?.mutate()
         backgroundPaddingLeft = padding.left
         backgroundPaddingTop = padding.top
 
-        container = object: ContainerView(context) {
+        container = object : ContainerView(context) {
             override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
                 try {
                     return allowDrawContent && super.drawChild(canvas, child, drawingTime)
@@ -116,9 +118,11 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
         })
 
         if (Build.VERSION.SDK_INT >= 30) {
-            container?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            container?.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         } else {
-            container?.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            container?.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
 
         backDrawable.alpha = 0
@@ -537,7 +541,7 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
         return 0
     }
 
-     open inner class ContainerView(context: Context) : FrameLayout(context) {
+    open inner class ContainerView(context: Context) : FrameLayout(context) {
         private var velocityTracker: VelocityTracker? = null
         private var startedTrackingX = 0
         private var startedTrackingY = 0
@@ -551,9 +555,9 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
         private val backgroundPaint = Paint()
         private var keyboardChanged = false
 
-         init {
-             setWillNotDraw(false)
-         }
+        init {
+            setWillNotDraw(false)
+        }
 
         private fun checkDismiss(velX: Float, velY: Float) {
             val translationY: Float = containerView?.translationY ?: 0f
@@ -629,7 +633,13 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 val dy = (ev.y.toInt() - startedTrackingY).toFloat()
                 velocityTracker!!.addMovement(ev)
 
-                if (maybeStartTracking && !startedTracking && dy > 0 && dy / 3.0f > Math.abs(dx) && Math.abs(dy) >= touchSlop) {
+                if (
+                    maybeStartTracking
+                    && !startedTracking
+                    && dy > 0
+                    && dy / 3.0f > Math.abs(dx)
+                    && Math.abs(dy) >= touchSlop
+                ) {
                     startedTrackingY = ev.y.toInt()
                     maybeStartTracking = false
                     startedTracking = true
@@ -701,7 +711,8 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
             }
 
             if (lastInsets != null) {
-                width -= (lastInsets?.systemWindowInsetRight ?: 0) + (lastInsets?.systemWindowInsetLeft ?: 0)
+                width -= (lastInsets?.systemWindowInsetRight ?: 0) +
+                        (lastInsets?.systemWindowInsetLeft ?: 0)
             }
 
             val isPortrait = width < height
@@ -736,7 +747,13 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
             }
         }
 
-         override fun onLayout(changed: Boolean, leftValue: Int, top: Int, rightValue: Int, bottom: Int) {
+        override fun onLayout(
+            changed: Boolean,
+            leftValue: Int,
+            top: Int,
+            rightValue: Int,
+            bottom: Int
+        ) {
             var left = leftValue
             var right = rightValue
 
@@ -745,7 +762,8 @@ internal class BottomSheet(context: Context) : Dialog(context, R.style.Transpare
                 left += lastInsets?.systemWindowInsetLeft ?: 0
                 right -= lastInsets?.systemWindowInsetRight ?: 0
 
-                t -= (lastInsets?.systemWindowInsetBottom ?: 0) - if (drawNavigationBar) 0 else bottomInset
+                t -= (lastInsets?.systemWindowInsetBottom?: 0) -
+                        if (drawNavigationBar) 0 else bottomInset
                 if (Build.VERSION.SDK_INT >= 29) {
                     t -= getAdditionalMandatoryOffsets()
                 }
