@@ -29,12 +29,12 @@ class MainActivity : AppCompatActivity() {
                 .dateTimeTextColor(R.color.white)
                 .buttonColor(R.color.picton_blue)
                 .buttonTextColor(R.color.white)
-                .setTodayText("Aujourd'hui")
+                .setTodayText("Today")
                 .setLocale(Locale.getDefault() ?: Locale.ENGLISH)
                 .setButtonText(
-                    "Today ' HH:mm",
-                    "Send on d MMM yyyy 'à' HH:mm",
-                    "'Send on' d MMM yyyy 'à' HH:mm"
+                    "'Today' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm"
                 )
                 .addListener(object : OnDateTimeSelectedListener {
                     override fun onDateTimeSelected(millis: Long) {

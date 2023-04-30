@@ -37,7 +37,14 @@ With default setting it would look like this:
                 .dateTimeTextColor(R.color.white)
                 .buttonColor(R.color.picton_blue)
                 .buttonTextColor(R.color.white)
-                .vibration(true) // heptic feedback when values are scrolled
+                .vibration(true) //heptic feedback when values are scrolled
+                .setTodayText("Today") //new 
+                .setLocale(Locale.getDefault() ?: Locale.ENGLISH) //new
+                .setButtonText(
+                    "'Today' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm",
+                    "'Send on' d MMM yyyy 'at' HH:mm"
+                ) //new
                 //.setDateTimeMillis(/* long milliseconds*/)
                 .addListener(object : OnDateTimeSelectedListener {
                     override fun onDateTimeSelected(millis: Long) {
